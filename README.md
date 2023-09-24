@@ -9,9 +9,9 @@ My Fake-Store-Service Apps
     DELETE : delete/{id}<br><br>
 
 URLs are :<br>
-    http://localhost:8090/v1/store/search
-    http://localhost:8090/v1/store/search/10
-    http://localhost:8090/v1/store/create
-    http://localhost:8090/v1/store/update
-    http://localhost:8090/v1/store/update-any
-    http://localhost:8090/v1/store/delete/10
+    http://localhost:8090/v1/store/search <br>
+    http://localhost:8090/v1/store/search/10 <br>
+    http://localhost:8090/v1/store/create <br>
+    http://localhost:8090/v1/store/update <br>
+    http://localhost:8090/v1/store/update-any <br>
+    http://localhost:8090/v1/store/delete/10 <br>
