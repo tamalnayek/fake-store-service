@@ -2,6 +2,8 @@ package com.mystore.spring.boot.fakestore.controller;
 
 import com.mystore.spring.boot.fakestore.dto.ProductDTO;
 import com.mystore.spring.boot.fakestore.service.ProductService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,12 @@ public class ProductController {
     @GetMapping("product/find-all")
     public List<ProductDTO> getAllProducts(){
         return productService.getAllProducts();
+    }
+
+    @GetMapping("product/find-with")
+    public List<ProductDTO> getAllProductsWithLimit(@PageableDefault(size = 10) Pageable pageable){
+            //(@RequestParam(defaultValue = "10", value = "limit") int limit){
+        return productService.getProductsWithLimit(pageable);
     }
 
     @GetMapping("product/find-by-category/{id}")

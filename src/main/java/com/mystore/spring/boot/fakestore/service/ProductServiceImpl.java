@@ -7,6 +7,7 @@ import com.mystore.spring.boot.fakestore.mapper.ProductMapper;
 import com.mystore.spring.boot.fakestore.repository.CategoryRepository;
 import com.mystore.spring.boot.fakestore.repository.ProductRepository;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,6 +69,13 @@ public class ProductServiceImpl implements ProductService{
        }
         Optional<Product> result = productRepository.findById(productDTO.getId());
         return result.map(productMapper::mapToProductDTO).orElse(null);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsWithLimit(Pageable limit) {
+        //List<Product> products = productRepository.findAllWithLimit(limit);
+        List<Product> allWithLimit = productRepository.findAllWithLimit(limit);
+        return allWithLimit.stream().map(productMapper::mapToProductDTO).collect(Collectors.toList());
     }
 
     public List<ProductDTO> getProductsByCategory(Long id){
