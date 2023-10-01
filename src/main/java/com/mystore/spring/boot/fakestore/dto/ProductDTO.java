@@ -1,16 +1,19 @@
 package com.mystore.spring.boot.fakestore.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Setter
-@Getter
-public class ProductDTO {
+import java.io.Serializable;
 
-    private Long id;
-    private String title;
-    private String description;
-    private String image;
-    private String category;
-    private double price;
+/**
+ * DTO for {@link com.mystore.spring.boot.fakestore.entity.Product}
+ */
+@Value
+public class ProductDTO implements Serializable {
+    Long id;
+    String title;
+    String description;
+    String image;
+    Long price;
+    String currency;
+    CategoryDTO category;
 }
