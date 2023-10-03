@@ -1,6 +1,6 @@
 package com.mystore.spring.boot.fakestore.service;
 
-import com.mystore.spring.boot.fakestore.dto.ProductDTO;
+import com.mystore.spring.boot.fakestore.dto.FakeProductDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -28,36 +29,36 @@ public class FakeStoreSevice {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public ProductDTO createProduct(ProductDTO product){
-        ResponseEntity<ProductDTO> productDTOResponseEntity =
-                restTemplate.postForEntity(URL.concat(PRODUCTS), product, ProductDTO.class);
+    public FakeProductDTO createProduct(FakeProductDTO product){
+        ResponseEntity<FakeProductDTO> productDTOResponseEntity =
+                restTemplate.postForEntity(URL.concat(PRODUCTS), product, FakeProductDTO.class);
         return productDTOResponseEntity.getBody();
     }
 
-    public ProductDTO getProductById(Long id){
-        ResponseEntity<ProductDTO> forEntity = restTemplate.getForEntity(URL.concat(PRODUCTS).concat("/{id}"), ProductDTO.class, id);
+    public FakeProductDTO getProductById(Long id){
+        ResponseEntity<FakeProductDTO> forEntity = restTemplate.getForEntity(URL.concat(PRODUCTS).concat("/{id}"), FakeProductDTO.class, id);
         return Objects.requireNonNull(forEntity).getBody();
     }
 
-    public List<ProductDTO> getAllProducts(){
-        ResponseEntity<ProductDTO[]> forEntity = restTemplate.getForEntity(URL.concat(PRODUCTS), ProductDTO[].class);
+    public List<FakeProductDTO> getAllProducts(){
+        ResponseEntity<FakeProductDTO[]> forEntity = restTemplate.getForEntity(URL.concat(PRODUCTS), FakeProductDTO[].class);
         return Arrays.asList(Objects.requireNonNull(forEntity.getBody()));
     }
 
-    public ProductDTO deleteProduct(Long id){
+    public FakeProductDTO deleteProduct(Long id){
 
-        ResponseEntity<ProductDTO> response = restTemplate.execute(URL.concat(PRODUCTS).concat("/{id}"), HttpMethod.DELETE,
-                restTemplate.acceptHeaderRequestCallback(ProductDTO.class),
-                restTemplate.responseEntityExtractor(ProductDTO.class), id);
+        ResponseEntity<FakeProductDTO> response = restTemplate.execute(URL.concat(PRODUCTS).concat("/{id}"), HttpMethod.DELETE,
+                restTemplate.acceptHeaderRequestCallback(FakeProductDTO.class),
+                restTemplate.responseEntityExtractor(FakeProductDTO.class), id);
         return Objects.requireNonNull(response).getBody();
     }
 
-    public ProductDTO updateProduct(ProductDTO product){
-        return getProductDTO(product, product.getId());
+    public FakeProductDTO updateProduct(Long id, FakeProductDTO product){
+        return getProductDTO(product, id);
     }
 
-    public ProductDTO patchProduct(ProductDTO product) {
-        ProductDTO dbObject = this.getProductById(product.getId());
+    public FakeProductDTO patchProduct(Long id, FakeProductDTO product) {
+        FakeProductDTO dbObject = this.getProductById(id);
         dbObject.setCategory(product.getCategory()==null? dbObject.getCategory() : product.getCategory());
         dbObject.setTitle(product.getTitle()==null? dbObject.getTitle() : product.getTitle());
         dbObject.setDescription(product.getDescription()==null? dbObject.getDescription() : product.getDescription());
@@ -67,11 +68,11 @@ public class FakeStoreSevice {
         return getProductDTO(dbObject, product.getId());
     }
 
-    private ProductDTO getProductDTO(ProductDTO product, Long id) {
+    private FakeProductDTO getProductDTO(FakeProductDTO product, Long id) {
         HttpHeaders headers = new HttpHeaders();
-        HttpEntity<ProductDTO> requestEntity = new HttpEntity<>(product, headers);
-        ResponseEntity<ProductDTO> response = restTemplate.exchange(URL.concat(PRODUCTS).concat("/{id}"), HttpMethod.PUT,
-                requestEntity, ProductDTO.class, id);
+        HttpEntity<FakeProductDTO> requestEntity = new HttpEntity<>(product, headers);
+        ResponseEntity<FakeProductDTO> response = restTemplate.exchange(URL.concat(PRODUCTS).concat("/{id}"), HttpMethod.PUT,
+                requestEntity, FakeProductDTO.class, id);
         return response.getBody();
     }
 }
