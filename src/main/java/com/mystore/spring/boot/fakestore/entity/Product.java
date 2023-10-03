@@ -24,9 +24,7 @@ public class Product extends BaseEntity{
     @Column(name = "currency")
     private String currency;
 
-    /*@ManyToOne(cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = "category")
-    private Category category;*/
+    //@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;

@@ -3,6 +3,7 @@ package com.mystore.spring.boot.fakestore.service;
 import com.mystore.spring.boot.fakestore.dto.ProductDTO;
 import com.mystore.spring.boot.fakestore.entity.Category;
 import com.mystore.spring.boot.fakestore.entity.Product;
+import com.mystore.spring.boot.fakestore.exception.NoRecordFoundException;
 import com.mystore.spring.boot.fakestore.mapper.ProductMapper;
 import com.mystore.spring.boot.fakestore.repository.CategoryRepository;
 import com.mystore.spring.boot.fakestore.repository.ProductRepository;
@@ -28,15 +29,16 @@ public class ProductServiceImpl implements ProductService{
     }
 
     public ProductDTO createProduct(ProductDTO productDTO){
-        //Product product = ProductMapper.MAPPER.mapToProduct(productDTO);
         Product result = productRepository.save(productMapper.mapToProduct(productDTO));
-        return ProductMapper.MAPPER.mapToProductDTO(result);
+        return productMapper.mapToProductDTO(result);
     }
 
-    public ProductDTO getProductById(Long id){
+    public ProductDTO getProductById(Long id) throws NoRecordFoundException {
         Optional<Product> product = productRepository.findById(id);
-        return product.map(productMapper::mapToProductDTO).orElse(null);
-        //throw new ProductNotFound();
+        if(product.isEmpty()){
+            throw new NoRecordFoundException("No record exist against this Product ID : "+id);
+        }
+        return productMapper.mapToProductDTO(product.get());
     }
 
     public List<ProductDTO> getAllProducts(){
@@ -44,46 +46,46 @@ public class ProductServiceImpl implements ProductService{
         return products.stream().map(productMapper::mapToProductDTO).collect(Collectors.toList());
     }
 
-    public String deleteProduct(Long id){
+    public String deleteProduct(Long id) throws NoRecordFoundException {
         Optional<Product> product = productRepository.findById(id);
         if(product.isPresent()){
             productRepository.deleteById(id);
-            return "Product deleted ! ID = "+id;
+            return "Product deleted of this ID = "+id;
         }
-        return null;
+        throw new NoRecordFoundException("No record exist to remove !!!");
     }
 
-    public ProductDTO updateProduct(ProductDTO productDTO){
+    public ProductDTO updateProduct(ProductDTO productDTO) throws NoRecordFoundException {
         Optional<Product> product = productRepository.findById(productDTO.getId());
         if(product.isPresent()){
             productRepository.saveAndFlush(productMapper.mapToProduct(productDTO));
+            return productDTO;
         }
-        return null;
+        throw new NoRecordFoundException("No record exist to update !!!");
     }
 
-    public ProductDTO patchProduct(ProductDTO productDTO) {
+    public ProductDTO patchProduct(ProductDTO productDTO) throws NoRecordFoundException {
        Optional<Product> target = productRepository.findById(productDTO.getId());
        if(target.isPresent()){
-           Product product = ProductMapper.MAPPER.mapToPatchUpdateProduct(productMapper.mapToProduct(productDTO), target.get());
+           Product product = productMapper.mapToPatchUpdateProduct(productMapper.mapToProduct(productDTO), target.get());
            productRepository.saveAndFlush(product);
+           return productMapper.mapToProductDTO(product);
        }
-        Optional<Product> result = productRepository.findById(productDTO.getId());
-        return result.map(productMapper::mapToProductDTO).orElse(null);
+        throw new NoRecordFoundException("No record exist to update !!!");
     }
 
     @Override
     public List<ProductDTO> getProductsWithLimit(Pageable limit) {
-        //List<Product> products = productRepository.findAllWithLimit(limit);
         List<Product> allWithLimit = productRepository.findAllWithLimit(limit);
         return allWithLimit.stream().map(productMapper::mapToProductDTO).collect(Collectors.toList());
     }
 
-    public List<ProductDTO> getProductsByCategory(Long id){
-        Category  category = categoryRepository.findById(id).orElse(null);
-        if(category == null){
-            return null;
+    public List<ProductDTO> getProductsByCategory(Long id) throws NoRecordFoundException {
+        Optional<Category> category = categoryRepository.findById(id);
+        if(category.isEmpty()){
+            throw new NoRecordFoundException("No such category exist !!!");
         }
-        List<Product> products = productRepository.findByCategory(category);
+        List<Product> products = productRepository.findByCategory(category.get());
         return products.stream().map(productMapper::mapToProductDTO).collect(Collectors.toList());
     }
 }

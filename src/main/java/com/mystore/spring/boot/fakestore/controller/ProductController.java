@@ -1,6 +1,7 @@
 package com.mystore.spring.boot.fakestore.controller;
 
 import com.mystore.spring.boot.fakestore.dto.ProductDTO;
+import com.mystore.spring.boot.fakestore.exception.NoRecordFoundException;
 import com.mystore.spring.boot.fakestore.service.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,7 +26,7 @@ public class ProductController {
     }
 
     @GetMapping("product/find/{id}")
-    public ProductDTO getProductById(@PathVariable("id") Long id){
+    public ProductDTO getProductById(@PathVariable("id") Long id) throws NoRecordFoundException {
         return productService.getProductById(id);
     }
 
@@ -36,28 +37,27 @@ public class ProductController {
 
     @GetMapping("product/find-with")
     public List<ProductDTO> getAllProductsWithLimit(@PageableDefault(size = 10) Pageable pageable){
-            //(@RequestParam(defaultValue = "10", value = "limit") int limit){
         return productService.getProductsWithLimit(pageable);
     }
 
     @GetMapping("product/find-by-category/{id}")
-    public List<ProductDTO>  getProductByCategoryId(@PathVariable("id") Long id){
+    public List<ProductDTO>  getProductByCategoryId(@PathVariable("id") Long id) throws NoRecordFoundException {
         return productService.getProductsByCategory(id);
     }
 
 
     @DeleteMapping("product/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Long id){
+    public String deleteProduct(@PathVariable("id") Long id) throws NoRecordFoundException{
         return productService.deleteProduct(id);
     }
 
     @PutMapping("product/update")
-    public ProductDTO updateProduct(@RequestBody ProductDTO product){
+    public ProductDTO updateProduct(@RequestBody ProductDTO product) throws NoRecordFoundException{
         return productService.updateProduct(product);
     }
 
     @PatchMapping("product/update-any")
-    public ProductDTO patchProduct(@RequestBody ProductDTO product){
+    public ProductDTO patchProduct(@RequestBody ProductDTO product) throws NoRecordFoundException{
         return productService.patchProduct(product);
     }
 

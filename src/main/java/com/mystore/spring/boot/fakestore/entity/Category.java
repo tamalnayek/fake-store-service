@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +22,9 @@ public class Category extends BaseEntity{
     @Column(name = "description")
     private String description;
 
-    //@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-   // @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    //private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy = "category")
+    //@Fetch(FetchMode.SUBSELECT)
+    @Fetch(FetchMode.SELECT)
+    private List<Product> products;
 
 }
